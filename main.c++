@@ -4,7 +4,8 @@
 #include <SFML/Graphics.hpp>
 #define to_f(x) static_cast<float>(x)
 
-const std::string FONT_PATH = "fonts/Banita.ttf";
+const std::string FONT_PATH = "fonts/Utendo-Bold.ttf";
+const std::string ICON_PATH = "icon/FileCopier.png";
 
 template<typename stream>
 bool validatePath(stream& fileStream,std::string& filePath){
@@ -16,7 +17,9 @@ bool validatePath(stream& fileStream,std::string& filePath){
 }
 
 int main(){
-    sf::RenderWindow window(sf::VideoMode({720,480}),"File Copier");
+    sf::Image icon(ICON_PATH);
+    sf::RenderWindow window(sf::VideoMode({720,480}),"File Copier",sf::Style::Titlebar | sf::Style::Close);
+    window.setIcon(icon);
 
 
     sf::Font font(FONT_PATH);
@@ -44,7 +47,7 @@ int main(){
     sf::RectangleShape button({125.f,50.f});
     button.setFillColor(sf::Color::White);
     button.setPosition({310.f,210.f});
-    text2.setPosition({340.f,210.f});
+    text2.setPosition({338.f,212.f});
     text2.setFillColor(sf::Color::Black);
     text.setPosition({30.f,30.f});
     input1.setPosition({40.f, 90.f});
@@ -86,18 +89,20 @@ int main(){
 
             inputactive_1 = rect.getGlobalBounds().contains({to_f(mouse_pos.x),to_f(mouse_pos.y)});
             inputactive_2 = rect2.getGlobalBounds().contains({to_f(mouse_pos.x),to_f(mouse_pos.y)});
-            if(submit){
+            if(button.getGlobalBounds().contains({to_f(sf::Mouse::getPosition(window).x),to_f(sf::Mouse::getPosition(window).y)})){
                 std::ifstream inputFile(inputFilePath,std::ios::binary);
                 if(!validatePath(inputFile,inputFilePath)){
+                    text.setString("Source path is not valid");
                     return 1;
                 };
 
                 std::ofstream outputFile(inputFilePath2,std::ios::binary);
                 if(!validatePath(outputFile,inputFilePath2)){
+                    text.setString("Destination path is not valid");
                     return 1;
                 };
                 outputFile << inputFile.rdbuf();
-                text.setString("Sucessfully Copied");
+                text.setString("Sucessfully Copied!");
             }
         }
         if(inputactive_1){
